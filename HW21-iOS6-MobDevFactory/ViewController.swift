@@ -25,71 +25,43 @@ class ViewController: UIViewController {
         activityIndicator.isHidden = true
         textField.isSecureTextEntry = true
         textField.text = password
+        firstLabel.text = "What's the password?"
         print(password)
         
     }
     
     let queue = DispatchQueue(label: "myQueue", qos: .default)
-    let activityQue = DispatchQueue(label: "activityQue", qos: .userInteractive)
+    let activityQue = DispatchQueue(label: "activityQue", qos: .default)
     
     
     @IBAction func serachPass(_ sender: Any) {
-//       activityIndicator.isHidden = false
-        
-//        while textField.isSecureTextEntry == true && firstLabel.text != password {
-//            activityIndicator.isHidden = false
-//        }
-        activityQue.sync {
-            activityIndicator.isHidden = false
+
+        DispatchQueue.main.async {
+            self.activityIndicator.isHidden = false
         }
-        activityIndicator.isHidden = false
         
-        queue.sync { [self] in
+        
+        queue.async { [self] in
             self.bruteForce(passwordToUnlock: self.password)
-            
-        }
-        DispatchQueue.main.sync {
-            activityIndicator.isHidden = false
             self.firstLabel.text = self.password
             self.textField.isSecureTextEntry = false
+            self.activityIndicator.isHidden = true
+            
         }
         
     }
     
-    var isBlack: Bool = false {
-        didSet {
-            if isBlack {
-                self.view.backgroundColor = .black
-            } else {
-                self.view.backgroundColor = .white
-            }
-        }
-    }
-    
-    @IBAction func onBut(_ sender: Any) {
-        isBlack.toggle()
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
       
         firstLabel.text = "What's the password?"
+        activityIndicator.isHidden = true
 
-        
-       
-        
-//        self.bruteForce(passwordToUnlock: "1!gr")
-        
-        // Do any additional setup after loading the view.
     }
     
     func bruteForce(passwordToUnlock: String) {
-       
-        DispatchQueue.main.async {
-            self.activityIndicator.isHidden = false
-        }
-  
-        
+
         let ALLOWED_CHARACTERS:   [String] = String().printable.map { String($0) }
 
         var password: String = ""
@@ -138,6 +110,7 @@ func characterAt(index: Int, _ array: [String]) -> Character {
 func generateBruteForce(_ string: String, fromArray array: [String]) -> String {
     var str: String = string
 
+    
     if str.count <= 0 {
         str.append(characterAt(index: 0, array))
     }
