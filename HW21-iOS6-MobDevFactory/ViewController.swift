@@ -11,6 +11,7 @@ class ViewController: UIViewController {
   
     var password: String = ""
     
+    
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     @IBOutlet weak var textField: UITextField!
@@ -18,6 +19,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var firstButton: UIButton!
     
     @IBOutlet weak var firstLabel: UILabel!
+    
+    
     
     @IBAction func generatePass(_ sender: Any) {
         password = String(String().lowercase.randomElement()!) + String(String().digits.randomElement()!) + String(String().uppercase.randomElement()!) + String(String().punctuation.randomElement()!)
