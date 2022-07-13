@@ -30,18 +30,29 @@ class ViewController: UIViewController {
     }
     
     let queue = DispatchQueue(label: "myQueue", qos: .default)
+    let activityQue = DispatchQueue(label: "activityQue", qos: .userInteractive)
+    
     
     @IBAction func serachPass(_ sender: Any) {
-        activityIndicator.isHidden = false
-        queue.async { [self] in
-            self.bruteForce(passwordToUnlock: self.password)
-            firstLabel.text = password
-            textField.isSecureTextEntry = false
+//       activityIndicator.isHidden = false
+        
+//        while textField.isSecureTextEntry == true && firstLabel.text != password {
+//            activityIndicator.isHidden = false
+//        }
+        activityQue.sync {
+            activityIndicator.isHidden = false
         }
+        activityIndicator.isHidden = false
         
-       
-       
-        
+        queue.sync { [self] in
+            self.bruteForce(passwordToUnlock: self.password)
+            
+        }
+        DispatchQueue.main.sync {
+            activityIndicator.isHidden = false
+            self.firstLabel.text = self.password
+            self.textField.isSecureTextEntry = false
+        }
         
     }
     
@@ -62,8 +73,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
       
-        firstLabel.text = "Fuck"
-        activityIndicator.isHidden = true
+        firstLabel.text = "What's the password?"
+
+        
+       
         
 //        self.bruteForce(passwordToUnlock: "1!gr")
         
@@ -71,6 +84,11 @@ class ViewController: UIViewController {
     }
     
     func bruteForce(passwordToUnlock: String) {
+       
+        DispatchQueue.main.async {
+            self.activityIndicator.isHidden = false
+        }
+  
         
         let ALLOWED_CHARACTERS:   [String] = String().printable.map { String($0) }
 
@@ -80,10 +98,6 @@ class ViewController: UIViewController {
         while password != passwordToUnlock { // Increase MAXIMUM_PASSWORD_SIZE value for more
             password = generateBruteForce(password, fromArray: ALLOWED_CHARACTERS)
 //             Your stuff here
-            
-            DispatchQueue.main.async { [self] in
-                firstLabel.text = password
-            }
             
             print(password)
             // Your stuff here
